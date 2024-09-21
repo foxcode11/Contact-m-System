@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <iomanip>
+
 using namespace std;
 struct Node
 {
@@ -34,7 +36,7 @@ public:
     fflush(stdin);
     newer->phone_number = y;
     newer->next = NULL;
-    newer->prev == NULL;
+    newer->prev = NULL;
     if (head == NULL)
     {
       head = newer;
@@ -65,13 +67,12 @@ public:
     else
     {
       BubbleSort();
-      cout << "  Name: " << "      Number: \n"
-           << endl;
+      cout << left << setw(20) << "Name" << "Number" << endl;
+      cout << "------------------------------------" << endl;
       while (temp != NULL)
       {
         count++;
-        cout << "  " << temp->name;
-        cout << "          " << temp->phone_number << endl;
+        cout << left << setw(20) << temp->name << setw(15) << temp->phone_number << endl;
         temp = temp->next;
       }
       cout << "  Total contacts: " << count << endl;
@@ -304,7 +305,7 @@ public:
     Node *i, *j;
     string n;
     long long int n2;
-    if (temp = NULL)
+    if (temp == NULL)
     {
       cout << "  Empty contact Book" << endl;
     }
@@ -462,58 +463,41 @@ public:
 
   void reopenCB()
   {
-    bool isEmpty;
     ifstream myfile("contactbook.txt");
-    if (myfile.is_open() & myfile.peek() != EOF)
+    if (myfile.is_open() && myfile.peek() != EOF)
     {
-      int i = 0;
-      while (getline(myfile, x))
+      string line;
+      Node *last = NULL;
+      int i = 0; // Keeps track of whether we're reading name or number
+
+      while (getline(myfile, line))
       {
-        if (i % 2 == 0)
+        if (i % 2 == 0) // Reading the name
         {
+          Node *newer = new Node;
+          newer->name = line;
+          newer->next = NULL;
+          newer->prev = last;
+
           if (head == NULL)
           {
-            Node *newer = new Node;
-            newer->name = x;
-            newer->next = NULL;
-            newer->prev == NULL;
             head = newer;
           }
           else
           {
-            Node *newer = new Node;
-            newer->name = x;
-            newer->next = NULL;
-            Node *temp = head;
-            while (temp->next != NULL)
-            {
-              temp = temp->next;
-            }
-            temp->next = newer;
-            newer->prev = temp;
+            last->next = newer;
           }
+          last = newer; // Move the last pointer to the new node
         }
-        else
+        else // Reading the phone number
         {
-          Node *temp = head;
-          if (temp->phone_number == 0)
-          {
+          stringstream convert(line);
+          long long int number;
+          convert >> number;
 
-            stringstream convert(x);
-            convert >> y;
-            temp->phone_number = y;
-          }
-          else
+          if (last != NULL) // Assign phone number to the last node
           {
-            Node *temp = head;
-            while (temp->next != NULL)
-            {
-              temp = temp->next;
-            }
-
-            stringstream convert(x);
-            convert >> y;
-            temp->phone_number = y;
+            last->phone_number = number;
           }
         }
         i++;
@@ -525,6 +509,7 @@ public:
       cout << "  File is Empty so Cannot open...Sorry" << endl;
     }
   }
+
   void Structure()
   {
     cout << "***********" << endl;
